@@ -1,29 +1,45 @@
 using Microsoft.Net.Http.Headers;
 using Serilog.Formatting.Compact;
 using Serilog;
+using Quartz;
+using Quartz.Impl;
+using BackGroundProcess.Concole.Jobs;
 
-var builder = WebApplication.CreateBuilder(args);
-
-builder.Services.AddHttpClient("GetProducts", client =>
+internal class Program
 {
-    client.BaseAddress = new Uri("http://localhost:12739");
-    client.DefaultRequestHeaders.Clear();
-    client.DefaultRequestHeaders.Add(HeaderNames.Accept, "application/json");
-});
-
-var logger = new LoggerConfiguration()
+    private static async Task Main(string[] args)
+    {
+        var logger = new LoggerConfiguration()
     //.ReadFrom.Configuration(builder.Configuration)
     //.WriteTo.Console()
     .WriteTo.File(new RenderedCompactJsonFormatter(), "../logs/log.json", rollingInterval: RollingInterval.Day)
     .CreateLogger();
-builder.Logging.ClearProviders();
-builder.Logging.AddSerilog(logger);
 
-var app = builder.Build();
-
-app.UseHttpsRedirection();
-app.UseRouting();
+        StdSchedulerFactory factory = new StdSchedulerFactory();
+        IScheduler scheduler = await factory.GetScheduler();
 
 
-app.Run();
+        await scheduler.Start();
 
+        IJobDetail job = JobBuilder.Create<UpdateDataBase>()
+         .WithIdentity("job1", "group1")
+         .Build();
+
+        ITrigger trigger = TriggerBuilder.Create()
+            .WithIdentity("trigger1", "group1")
+            .StartNow()
+            .WithSimpleSchedule(x => x
+            .WithIntervalInSeconds(10))
+            .Build();
+
+        await scheduler.ScheduleJob(job, trigger);
+
+        await Task.Delay(TimeSpan.FromSeconds(60));
+
+
+        await scheduler.Shutdown();
+
+        Console.WriteLine("Press any key to close the application");
+        Console.ReadKey();
+    }
+}
