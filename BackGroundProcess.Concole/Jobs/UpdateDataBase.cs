@@ -1,6 +1,4 @@
-﻿using BackGroundProcess.Application.Data;
-using BackGroundProcess.Console.Model;
-using BackGroundProcess.Domain.Entities;
+﻿using BackGroundProcess.Console.Model;
 using Microsoft.Extensions.Logging;
 using Quartz;
 using System.Net.Http.Headers;
@@ -12,17 +10,17 @@ namespace BackGroundProcess.Concole.Jobs
 {
     public class UpdateDataBase : IJob
     {
-        private readonly ILogger<UpdateDataBase> _logger;
+        //private readonly ILogger<UpdateDataBase> _logger;
 
-        public UpdateDataBase(ILogger<UpdateDataBase> logger)
+        /*public UpdateDataBase(ILogger<UpdateDataBase> logger)
         {
-
             _logger = logger;
-        }
+        }*/
 
         public async Task Execute(IJobExecutionContext context)
         {
             HttpClient client = new HttpClient();
+
             /* var httpClient = _clientFactory.CreateClient("GetProducts");
 
              var response = await httpClient.GetAsync("/Products");
@@ -31,25 +29,25 @@ namespace BackGroundProcess.Concole.Jobs
 
              var Products = await response.Content.ReadAsStringAsync();*/
 
-            _logger.LogInformation("Accesing Request");
-            var Products = await client.GetFromJsonAsync<IEnumerable<ProductModel>>("http://localhost:12739/Products");
+           // _logger.LogInformation("Accesing Request");
+            var Products = await client.GetFromJsonAsync<IEnumerable<ProductModel>>("https://localhost:7054/Products");
 
-            _logger.LogInformation("Request Succesfull");
+            //_logger.LogInformation("Request Succesfull");
             if (Products != null && Products.Any())
             {
 
                 foreach (ProductModel product in Products)
                 {
-                    await client.PostAsJsonAsync("http://localhost:12739/Products", product);
-                    _logger.LogInformation("Product with id {0} was added", product.Id);
+                    await client.PostAsJsonAsync("https://localhost:7097/Products", product);
+                    //_logger.LogInformation("Product with id {0} was added", product.Id);
                 }
-                _logger.LogInformation("Request Succesfull, data load completed");
+                //_logger.LogInformation("Request Succesfull, data load completed");
             }
-            else
+          /*  else
             {
                 _logger.LogInformation("No data to add");
             }
-
+          */
         }
     }
 }
