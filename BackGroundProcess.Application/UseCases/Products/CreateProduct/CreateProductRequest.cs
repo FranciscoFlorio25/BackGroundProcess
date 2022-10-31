@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 
 namespace BackGroundProcess.Application.UseCases.Products.CreateProduct
 {
-    public record CreateProductRequest(string Name,string? Description) : IRequest<CreateProductResponse>;
+    public record CreateProductRequest(string Name,string? Description, DateTime CreationDate,
+        bool IsActive) : IRequest<CreateProductResponse>;
 
 }

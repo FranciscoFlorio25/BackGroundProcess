@@ -1,6 +1,7 @@
 ﻿using BackGroundProcess.Console.Model;
 using Microsoft.Extensions.Logging;
 using Quartz;
+using System.Linq;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Text.Json;
@@ -10,44 +11,35 @@ namespace BackGroundProcess.Concole.Jobs
 {
     public class UpdateDataBase : IJob
     {
-        //private readonly ILogger<UpdateDataBase> _logger;
-
-        /*public UpdateDataBase(ILogger<UpdateDataBase> logger)
-        {
-            _logger = logger;
-        }*/
-
         public async Task Execute(IJobExecutionContext context)
         {
             HttpClient client = new HttpClient();
 
-            /* var httpClient = _clientFactory.CreateClient("GetProducts");
+            var productsToAdd = await client.GetFromJsonAsync<IEnumerable<ProductModel>>("https://localhost:7054/Products");
+            var productsInBase = await client.GetFromJsonAsync<IEnumerable<ProductModel>>("https://localhost:7097/Products");
 
-             var response = await httpClient.GetAsync("/Products");
 
-             response.EnsureSuccessStatusCode();
-
-             var Products = await response.Content.ReadAsStringAsync();*/
-
-           // _logger.LogInformation("Accesing Request");
-            var Products = await client.GetFromJsonAsync<IEnumerable<ProductModel>>("https://localhost:7054/Products");
-
-            //_logger.LogInformation("Request Succesfull");
-            if (Products != null && Products.Any())
+            if (productsToAdd != null && productsToAdd.Any())
             {
 
-                foreach (ProductModel product in Products)
+                foreach (ProductModel product in productsToAdd)
                 {
-                    await client.PostAsJsonAsync("https://localhost:7097/Products", product);
-                    //_logger.LogInformation("Product with id {0} was added", product.Id);
+
+                    if (productsInBase != null && productsInBase.Any())
+                    {
+
+                        if (!productsInBase.Contains(product))
+                        {
+                            await client.PostAsJsonAsync("https://localhost:7097/Products", product);
+                        }
+                    }
+                    else
+                    {
+                        await client.PostAsJsonAsync("https://localhost:7097/Products", product);
+                    }
+
                 }
-                //_logger.LogInformation("Request Succesfull, data load completed");
             }
-          /*  else
-            {
-                _logger.LogInformation("No data to add");
-            }
-          */
         }
     }
 }

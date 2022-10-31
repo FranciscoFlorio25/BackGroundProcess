@@ -2,7 +2,6 @@
 {
     public record ProductModel
     (
-        int Id,
         string Name,
         string? Description,
         DateTime CreationDate,

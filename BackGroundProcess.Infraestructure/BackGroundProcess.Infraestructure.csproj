@@ -18,11 +18,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Migrations\" />
+    <ProjectReference Include="..\BackGroundProcess.Application\BackGroundProcess.Application.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\BackGroundProcess.Application\BackGroundProcess.Application.csproj" />
+    <Folder Include="Migrations\" />
   </ItemGroup>
 
 </Project>

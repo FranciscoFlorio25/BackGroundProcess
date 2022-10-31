@@ -21,7 +21,7 @@ namespace BackGroundProcess.Application.UseCases.Products.CreateProduct
 
         public async Task<CreateProductResponse> Handle(CreateProductRequest request, CancellationToken cancellationToken)
         {
-            Product product = new(request.Name, request.Description, DateTime.Now, isActive: true);
+            Product product = new(request.Name, request.Description, request.CreationDate, request.IsActive);
 
             await _context.Products.AddAsync(product);
 
