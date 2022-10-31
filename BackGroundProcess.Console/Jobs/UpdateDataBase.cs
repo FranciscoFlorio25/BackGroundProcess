@@ -18,7 +18,6 @@ namespace BackGroundProcess.Concole.Jobs
             var productsToAdd = await client.GetFromJsonAsync<IEnumerable<ProductModel>>("https://localhost:7054/Products");
             var productsInBase = await client.GetFromJsonAsync<IEnumerable<ProductModel>>("https://localhost:7097/Products");
 
-
             if (productsToAdd != null && productsToAdd.Any())
             {
 
@@ -37,7 +36,6 @@ namespace BackGroundProcess.Concole.Jobs
                     {
                         await client.PostAsJsonAsync("https://localhost:7097/Products", product);
                     }
-
                 }
             }
         }

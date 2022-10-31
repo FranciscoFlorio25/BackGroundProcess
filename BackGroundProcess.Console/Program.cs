@@ -10,7 +10,6 @@ internal class Program
 {
     private static async Task Main(string[] args)
     {
-        //.ReadFrom.Configuration(builder.Configuration)
         var logger = new LoggerConfiguration()
         .WriteTo.Console()
         .WriteTo.File(new RenderedCompactJsonFormatter(), "../logs/log.json", rollingInterval: RollingInterval.Day)
