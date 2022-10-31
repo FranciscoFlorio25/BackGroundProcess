@@ -15,7 +15,6 @@ namespace BackGroundProcess.Console.Scheduls
 
             await scheduler.Start();
 
-
             IJobDetail job = JobBuilder.Create<UpdateDataBase>()
              .WithIdentity("job1", "group1")
              .Build();
@@ -23,7 +22,8 @@ namespace BackGroundProcess.Console.Scheduls
             ITrigger trigger = TriggerBuilder.Create()
                 .WithIdentity("trigger1", "group1")
                 .WithSimpleSchedule(x => x
-                .WithIntervalInSeconds(10))
+                .WithIntervalInSeconds(10)
+                .RepeatForever())
                 .Build();
 
             await scheduler.ScheduleJob(job, trigger);

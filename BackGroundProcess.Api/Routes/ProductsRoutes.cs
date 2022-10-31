@@ -1,5 +1,6 @@
 ﻿using BackGroundProcess.Application.UseCases.Products.CreateProduct;
 using BackGroundProcess.Application.UseCases.Products.GetAllProducts;
+using BackGroundProcess.Application.UseCases.Products.UpdateProduct;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -18,6 +19,11 @@ namespace BackGroundProcess.Api.Routes
                  => Results.Ok(await mediator.Send(request)))
                 .WithName(endpointName: "CreateProducts")
                 .Produces<CreateProductRequest>(StatusCodes.Status200OK, contentType: "application/json");
+     
+            builder.MapPut(pattern: "/Products/Update", async ([FromServices] IMediator mediator, [FromBody] UpdateProductRequest request)
+                 => Results.Ok(await mediator.Send(request)))
+                .WithName(endpointName: "UpdateProduct")
+                .Produces<UpdateProductRequest>(StatusCodes.Status200OK, contentType: "application/json");
 
             return builder;
         }
